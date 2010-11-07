@@ -12,8 +12,16 @@ private
       end.flatten
     else
       return nil if block_given? && !yield(data)
-      require 'ruby-debug'
-      debugger
+      begin
+        require 'ruby-debug'
+      rescue LoadError
+        if RUBY_VERSION.to_f == 1.9
+          rdebug_version = "ruby-debug19"
+        else
+          rdebug_version = "ruby-debug"
+        end
+        puts "Missing ruby-debug. Install with: gem install #{rdebug_version}"
+      end
       [prefix.flatten.join(joiner) => data]
     end
   end
